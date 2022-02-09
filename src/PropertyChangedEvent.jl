@@ -14,7 +14,7 @@ function _dft_prop_changed_update!(e::CustomEvent, prop::Symbol)
 end
 
 function _dft_prop_changed_trigger(::CustomEvent, old_val, new_val)
-    return isequal(old_val, new_val)
+    return !isequal(old_val, new_val)
 end
 
 function PropertyChangedEvent(obj)
