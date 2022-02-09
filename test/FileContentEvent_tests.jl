@@ -10,7 +10,7 @@ let
     trigger_at = [3, 4, 5]
     for it in 1:10
         touch(file)
-        if is_event!(e, file)
+        if has_event!(e, file)
             println(basename(file), " changed!!!")
             events_count += 1
         end

@@ -31,39 +31,39 @@ Base.get(f::Function, e::AbstractEvent, key) = get(f, states(e), key)
 Returns true if the event happened.
 It do not update the handler state (see bang version).
 """
-is_event
+has_event
 
-is_event(e::AbstractEvent, args...) = trigger(e, old_state(e, args...), new_state(e, args...))
+has_event(e::AbstractEvent, args...) = trigger(e, old_state(e, args...), new_state(e, args...))
 
 
 """
 Returns true if the event happened.
-Additionally, it will call `update!` over the handler (only if `is_event` triggered).
+Additionally, it will call `update!` over the handler (only if `has_event` triggered).
 """
-is_event!
+has_event!
 
-function is_event!(e::AbstractEvent, args...)
-    flag = is_event(e, args...)
+function has_event!(e::AbstractEvent, args...)
+    flag = has_event(e, args...)
     flag && update!(e, args...)
     return flag
 end
 
 """
-Executes `f()` if `is_event` returns true.
+Executes `f()` if `has_event` returns true.
 Returns the results of `f()` or nothing.
 """
 on_event
 
-on_event(f::Function, e::AbstractEvent, args...) = (is_event(e, args...) ? f() : nothing)
+on_event(f::Function, e::AbstractEvent, args...) = (has_event(e, args...) ? f() : nothing)
 
 """
-Executes `f()` if `is_event` returns true.
-Additionally, it will call `update!` over the handler (only if `is_event` triggered).
+Executes `f()` if `has_event` returns true.
+Additionally, it will call `update!` over the handler (only if `has_event` triggered).
 Returns the results of `f()` or nothing.
 """
 on_event!
 
 function on_event!(f::Function, e::AbstractEvent, args...)
-    flag = is_event!(e, args...)
+    flag = has_event!(e, args...)
     return flag ? f() : nothing
 end

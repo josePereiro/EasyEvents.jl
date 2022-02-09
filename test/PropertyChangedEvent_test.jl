@@ -9,7 +9,7 @@ let
     trigger_at = [3, 4, 5]
     for it in 1:10
         
-        if is_event!(e, :__glob)
+        if has_event!(e, :__glob)
             println(:__glob, " changed!!!")
             events_count += 1
         end

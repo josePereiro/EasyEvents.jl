@@ -32,7 +32,7 @@ end
 
 function _dft_file_content_new_state(e::CustomEvent, file::String)
     mtime_event = _file_content_mtime_event(e)
-    if is_event!(mtime_event, file)
+    if has_event!(mtime_event, file)
         # Recompute only is file was modify (better performance)
         # And cached
         hash_ = _up_file_content_hash_cache!(e, file)
