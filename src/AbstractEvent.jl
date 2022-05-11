@@ -17,6 +17,7 @@ update!(e::AbstractEvent, args...) = error("Method `update!(e::$(typeof(e)), arg
 reset!(e::AbstractEvent, args...) = error("Method `reset!(e::$(typeof(e)), args...)` not defined!")
 trigger(e::AbstractEvent, old_state, new_state) = error("Method `trigger(e::$(typeof(e)), old_state, new_state)` not defined!")
 states(e::AbstractEvent) = error("Method `states(e::$(typeof(e)))::AbstractDict` not defined!")
+istraking(e::AbstractEvent, key) = haskey(states(e), key)
 
 ## ------------------------------------------------------------------
 Base.getindex(e::AbstractEvent, key) = getindex(states(e), key)
