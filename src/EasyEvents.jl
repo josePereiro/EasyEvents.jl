@@ -3,7 +3,7 @@ module EasyEvents
 include("AbstractEvent.jl")
 export AbstractEvent
 export old_state, new_state, update!, reset!, trigger, states, istraking
-export has_event, has_event!, on_event, on_event!
+export has_event, has_event!,pull_event, pull_event!, on_event, on_event!
 
 include("CustomEvent.jl")
 export CustomEvent

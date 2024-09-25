@@ -9,7 +9,7 @@ let
     events_count = 0
     trigger_at = [3, 4, 5]
     for it in 1:10
-        if has_event!(e ,file)
+        if pull_event!(e ,file)
             println(basename(file), " changed!!!")
             events_count += 1
         end

@@ -33,7 +33,7 @@ let
         
         # This will run if Main.__glob changed from the last update
         # The bang indicates that `update!(e, :__glob)` will be called
-        if has_event!(e, :__glob)
+        if pull_event!(e, :__glob)
             println("[", it, "] event detected!!!")
         else
             println("[", it, "] nothing to do!!!")

@@ -31,15 +31,26 @@ Base.get(f::Function, e::AbstractEvent, key) = get(f, states(e), key)
 """
 Returns true if the event happened.
 It do not update the handler state (see bang version).
+DEPRECATED
 """
 has_event
 
 has_event(e::AbstractEvent, args...) = trigger(e, old_state(e, args...), new_state(e, args...))
 
+"""
+Returns true if the event happened.
+It do not update the handler state (see bang version).
+"""
+pull_event
+
+pull_event(e::AbstractEvent, args...) = trigger(e, old_state(e, args...), new_state(e, args...))
+
+@deprecate has_event(x...) pull_event(x...) true
 
 """
 Returns true if the event happened.
 Additionally, it will call `update!` over the handler (only if `has_event` triggered).
+DEPRECATED
 """
 has_event!
 
@@ -49,22 +60,37 @@ function has_event!(e::AbstractEvent, args...)
     return flag
 end
 
+
 """
-Executes `f()` if `has_event` returns true.
+Returns true if the event happened.
+Additionally, it will call `update!` over the handler (only if `pull_event` triggered).
+"""
+pull_event!
+
+function pull_event!(e::AbstractEvent, args...)
+    flag = pull_event(e, args...)
+    flag && update!(e, args...)
+    return flag
+end
+
+@deprecate has_event!(x...) pull_event!(x...) true
+
+"""
+Executes `f()` if `pull_event` returns true.
 Returns the results of `f()` or nothing.
 """
 on_event
 
-on_event(f::Function, e::AbstractEvent, args...) = (has_event(e, args...) ? f() : nothing)
+on_event(f::Function, e::AbstractEvent, args...) = (pull_event(e, args...) ? f() : nothing)
 
 """
-Executes `f()` if `has_event` returns true.
-Additionally, it will call `update!` over the handler (only if `has_event` triggered).
+Executes `f()` if `pull_event` returns true.
+Additionally, it will call `update!` over the handler (only if `pull_event` triggered).
 Returns the results of `f()` or nothing.
 """
 on_event!
 
 function on_event!(f::Function, e::AbstractEvent, args...)
-    flag = has_event!(e, args...)
+    flag = pull_event!(e, args...)
     return flag ? f() : nothing
 end
