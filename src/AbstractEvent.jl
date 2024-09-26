@@ -76,6 +76,42 @@ end
 @deprecate has_event!(x...) pull_event!(x...) true
 
 """
+Return: 
+- `:new` if the `key` is new
+- `:mod` if the event was triggered
+- `:same` if the event was not triggered
+Additionally, it will call `update!` over the handler.
+"""
+event_type!
+
+function event_type!(evt::AbstractEvent, key)
+    _isnew = !istraking(evt, key)
+    if _isnew
+        update!(evt, key)
+        return :new
+    end
+    _ismod = pull_event!(evt, key)
+    return _ismod ? :mod : :same
+end
+
+"""
+Return: 
+- `:new` if the `key` is new
+- `:mod` if the event was triggered
+- `:same` if the event was not triggered
+Additionally, it will call `update!` over the handler.
+"""
+event_type
+
+function event_type(evt::AbstractEvent, key)
+    _isnew = !istraking(evt, key)
+    _isnew && return :new
+    _ismod = pull_event(evt, key)
+    return _ismod ? :mod : :same
+end
+
+
+"""
 Executes `f()` if `pull_event` returns true.
 Returns the results of `f()` or nothing.
 """
@@ -94,3 +130,4 @@ function on_event!(f::Function, e::AbstractEvent, args...)
     flag = pull_event!(e, args...)
     return flag ? f() : nothing
 end
+

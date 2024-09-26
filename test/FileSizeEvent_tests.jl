@@ -4,20 +4,30 @@ let
     e = FileSizeEvent()
     file = joinpath(tempdir(), "FileSizeEvent.test")
     write(file, "")
-    update!(e, file)
 
-    events_count = 0
+    @test event_type!(e, file) === :new
+
     trigger_at = [3, 4, 5]
-    for it in 1:10
-        if pull_event!(e ,file)
+    mod_at = Int[]
+    same_at = Int[]
+    _iter = collect(1:10)
+    for it in _iter
+        # mod
+        it in trigger_at && write(file, "a"^it)
+
+        _etype = event_type!(e, file)
+        if _etype === :mod
             println(basename(file), " changed!!!")
-            events_count += 1
+            push!(mod_at, it)
         end
 
-        if it in trigger_at
-            _append(file, "a")
+        if _etype === :same
+            println(basename(file), " the same!!!")
+            push!(same_at, it)
         end
+
         sleep(0.1)
     end
-    @test events_count == length(trigger_at)
+    @test mod_at == trigger_at
+    @test same_at == setdiff(_iter, trigger_at)
 end

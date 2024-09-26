@@ -3,21 +3,30 @@ let
     @info("Testing PropertyChangedEvent")
     global __glob = rand()
     e = PropertyChangedEvent(Main)
-    update!(e, :__glob)
+    @test event_type!(e, :__glob) === :new
     
-    events_count = 0
     trigger_at = [3, 4, 5]
-    for it in 1:10
-        
-        if pull_event!(e, :__glob)
+    mod_at = Int[]
+    same_at = Int[]
+    _iter = collect(1:10)
+    for it in _iter
+        # mod
+        it in trigger_at && (__glob = rand())
+
+        _etype = event_type!(e, :__glob)
+        if _etype === :mod
             println(:__glob, " changed!!!")
-            events_count += 1
+            push!(mod_at, it)
         end
 
-        if it in trigger_at
-            __glob = rand()
+        if _etype === :same
+            println(:__glob, " the same!!!")
+            push!(same_at, it)
         end
+
         sleep(0.1)
     end
-    @test events_count == length(trigger_at)
+    @test mod_at == trigger_at
+    @test same_at == setdiff(_iter, trigger_at)
+
 end

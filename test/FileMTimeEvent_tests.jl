@@ -3,23 +3,31 @@ let
     @info("Testing FileMTimeEvent")
     e = FileMTimeEvent()
     file = joinpath(tempdir(), "FileMTimeEvent.test")
-    touch(file)
-    update!(e ,file)
+    @test event_type!(e, file) === :new
 
-    events_count = 0
     trigger_at = [3, 4, 5]
-    for it in 1:10
-        if pull_event!(e ,file)
+    mod_at = Int[]
+    same_at = Int[]
+    _iter = collect(1:10)
+    for it in _iter
+        # mod
+        it in trigger_at && touch(file)
+
+        _etype = event_type!(e, file)
+        if _etype === :mod
             println(basename(file), " changed!!!")
-            events_count += 1
+            push!(mod_at, it)
         end
 
-        if it in trigger_at
-            touch(file)
+        if _etype === :same
+            println(basename(file), " the same!!!")
+            push!(same_at, it)
         end
+
         sleep(0.1)
     end
-    @test events_count == length(trigger_at)
+    @test mod_at == trigger_at
+    @test same_at == setdiff(_iter, trigger_at)
 
     return nothing
 end
